@@ -34,7 +34,7 @@ class Squeeze(chainer.Chain):
             fire7 = FireModule(384,48,192,192),
             fire8 = FireModule(384,64,256,256),
             fire9 = FireModule(512,64,256,256),
-            conv10 = L.Convolution2D(512,1000,1,stride=1),
+            conv10 = L.Convolution2D(512,category_num,1,stride=1),
         )
 
     def __call__(self,x):
@@ -60,7 +60,7 @@ class Squeeze(chainer.Chain):
 
         h = self.conv10(h)
         num, categories, y, x = h.data.shape
-        h = F.reshape(F.average_pooling_2d(h, (y, x)), (num, categories))
+        h = F.reshape(F.average_pooling_2d(h,(y, x)), (num, categories))
 
         return h
 
@@ -70,7 +70,5 @@ if __name__ == "__main__":
     img = io.imread(imgpath)
     img = np.asarray(img).transpose(2,0,1).astype(np.float32)/255.
     img = img[np.newaxis]
-    print(img.shape)
-    model = Squeeze()
     ex = model(img)
     print(ex)
