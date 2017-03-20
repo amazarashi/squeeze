@@ -8,10 +8,11 @@ from chainer import utils
 class FireModule(chainer.Chain):
 
     def __init__(self,input_size,s1,e1,e3):
+        initializer = chainer.initializers.HeNormal()
         super(FireModule,self).__init__(
-            conv1 = L.Convolution2D(input_size,s1,1),
-            conv2 = L.Convolution2D(s1,e1,1),
-            conv3 = L.Convolution2D(s1,e3,3,pad=(1,1)),
+            conv1 = L.Convolution2D(input_size,s1,1,initialW=initializer),
+            conv2 = L.Convolution2D(s1,e1,1,initialW=initializer),
+            conv3 = L.Convolution2D(s1,e3,3,pad=(1,1),initialW=initializer),
         )
 
     def __call__(self,x):
@@ -24,8 +25,9 @@ class FireModule(chainer.Chain):
 class Squeeze(chainer.Chain):
 
     def __init__(self,category_num=10):
+        initializer = chainer.initializers.HeNormal()
         super(Squeeze,self).__init__(
-            conv1 = L.Convolution2D(3,96,7,stride=2),
+            conv1 = L.Convolution2D(3,96,7,stride=2,initialW=initializer),
             fire2 = FireModule(96,16,64,64),
             fire3 = FireModule(128,16,64,64),
             fire4 = FireModule(128,32,128,128),
@@ -34,7 +36,7 @@ class Squeeze(chainer.Chain):
             fire7 = FireModule(384,48,192,192),
             fire8 = FireModule(384,64,256,256),
             fire9 = FireModule(512,64,256,256),
-            conv10 = L.Convolution2D(512,category_num,1,stride=1),
+            conv10 = L.Convolution2D(512,category_num,1,stride=1,initialW=initializer),
         )
 
     def __call__(self,x):
@@ -63,6 +65,17 @@ class Squeeze(chainer.Chain):
         h = F.reshape(F.average_pooling_2d(h,(y, x)), (num, categories))
 
         return h
+
+    def calc_loss(self,y,t):
+        loss = F.softmax_cross_entropy(y,t)
+        return loss
+
+    def accuracy(self,y,t):
+        #acquire the accuracy of each categories
+        y.to_cpu()
+        t.to_cpu()
+        indices = np.where
+
 
 
 if __name__ == "__main__":
