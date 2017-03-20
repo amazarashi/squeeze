@@ -1,4 +1,4 @@
-##※ [STILL DEVELOPIING !!]
+# ※ [STILL DEVELOPIING !!]
 
 # about
 
