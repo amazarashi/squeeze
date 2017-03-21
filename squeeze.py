@@ -39,7 +39,7 @@ class Squeeze(chainer.Chain):
             conv10 = L.Convolution2D(512,category_num,1,stride=1,initialW=initializer),
         )
 
-    def __call__(self,x):
+    def __call__(self,x,train=True):
         #x = chainer.Variable(x)
         h = F.relu(self.conv1(x))
         h = F.max_pooling_2d(h,3,stride=2)
@@ -72,9 +72,10 @@ class Squeeze(chainer.Chain):
 
     def accuracy(self,y,t):
         #acquire the accuracy of each categories
+        ### FIX ME ###
         y.to_cpu()
         t.to_cpu()
-        indices = np.where
+        return F.accuracy(y,t)
 
 
 
