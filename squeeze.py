@@ -42,20 +42,20 @@ class Squeeze(chainer.Chain):
     def __call__(self,x,train=True):
         #x = chainer.Variable(x)
         h = F.relu(self.conv1(x))
-        h = F.max_pooling_2d(h,3,stride=2)
+        h = F.max_pooling_2d(h,3,stride=2,pad=1)
 
         h = self.fire2(h)
         h = self.fire3(h)
         h = self.fire4(h)
-        h = F.max_pooling_2d(h,3,stride=2)
+        h = F.max_pooling_2d(h,3,stride=2,pad=1)
 
         h = self.fire5(h)
         h = self.fire6(h)
         h = self.fire7(h)
-        h = F.max_pooling_2d(h,3,stride=2)
+        h = F.max_pooling_2d(h,3,stride=2,pad=1)
 
         h = self.fire8(h)
-        h = F.max_pooling_2d(h,3,stride=2)
+        h = F.max_pooling_2d(h,3,stride=2,pad=1)
 
         h = self.fire9(h)
         h = F.dropout(h,ratio=0.5)

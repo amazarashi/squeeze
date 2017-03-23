@@ -2,6 +2,7 @@ import urllib.request
 import tarfile
 from os import system
 import sys
+import six
 import pickle
 from tqdm import tqdm
 

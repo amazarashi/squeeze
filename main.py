@@ -1,6 +1,6 @@
 import argparse
-
-import squeeze_net
+from chainer import optimizers
+import squeeze
 import amaz_trainer
 import amaz_cifar10_dl
 
@@ -23,8 +23,9 @@ if __name__ == '__main__':
     args = parser.parse_args().__dict__
     lr = args.pop('lr')
 
-    model = squeeze_net.SqueezeNet(10)
-    optimizer = optimizer.Adam()
+    model = squeeze.Squeeze(10)
+    optimizer = optimizers.Adam()
+    optimizer.setup(model)
     dataset = amaz_cifar10_dl.Cifar10().loader()
     args['model'] = model
     args['optimizer'] = optimizer

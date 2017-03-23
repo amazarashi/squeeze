@@ -22,7 +22,7 @@ class Trainer(object):
         self.epoch = epoch
         self.batch = batch
         self.train_x,self.train_y,self.test_x,self.test_y,self.meta = self.init_dataset()
-        self.gpu = self.gpu
+        self.gpu = gpu
         self.xp = self.check_cupy(self.gpu)
         self.utility = amaz_util.Utility()
         self.datashaping = amaz_datashaping.DataShaping(self.xp)
@@ -50,21 +50,21 @@ class Trainer(object):
         train_x = self.train_x
         train_y = self.train_y
         meta = self.meta
-
         sum_loss = 0
-        progress = self.utility.create_progressbar(int(len(train_x)),desc='train',stride=1)
-        train_data_yeilder = sampling(train_x,train_y,batch,len(meta))
+        data_length = len(train_x)
+        progress = self.utility.create_progressbar(int(data_length),desc='train',stride=1)
+        train_data_yeilder = sampling.random_sampling(int(data_length),int(batch),self.epoch)
         for _,indices in zip(progress,train_data_yeilder):
             model.cleargrads()
             x = train_x[indices]
             t = train_y[indices]
 
-            x = datashaping.input(x,dtype=np.float32)
-            t = datashaping.input(t,dtype=np.int32)
+            x = self.datashaping.prepareinput(x,dtype=np.float32)
+            t = self.datashaping.prepareinput(t,dtype=np.int32)
 
             y = model(x,train=True)
             loss = model.calc_loss(y,t)
-            loss.backword()
+            loss.backward()
             loss.to_cpu()
             sum_loss += loss.data * len(x)
 
@@ -96,8 +96,7 @@ class Trainer(object):
 
     def run(self):
         epoch = self.epoch
-
-        progressor = self.utility.create_progressbar(epoch + 1,desc='epoch',stride=1,start=0)
+        progressor = self.utility.create_progressbar(epoch,desc='epoch',stride=1,start=0)
         for i in progressor:
-            self.train_one():
-            self.test_one():
+            self.train_one()
+            #self.test_one()
