@@ -65,8 +65,9 @@ class Trainer(object):
         sum_loss = 0
         total_data_length = len(train_x)
 
-        progress = self.utility.create_progressbar(int(total_data_length),desc='train',stride=batch)
-        train_data_yeilder = sampling.random_sampling(int(total_data_length),int(batch),self.epoch)
+        progress = self.utility.create_progressbar(int(total_data_length)/len(batch),desc='train',stride=1)
+        train_data_yeilder = sampling.random_sampling(int(total_data_length)/len(batch),int(batch),int(total_data_length))
+        #epoch,batch_size,data_length
         for i,indices in zip(progress,train_data_yeilder):
             model.cleargrads()
             x = train_x[indices]
@@ -84,7 +85,7 @@ class Trainer(object):
             loss = model.calc_loss(y,t)
             loss.backward()
             loss.to_cpu()
-            sum_loss += len(indices) * loss.data
+            sum_loss += loss.data * len(indices)
             del loss,x,t
             optimizer.update()
 
