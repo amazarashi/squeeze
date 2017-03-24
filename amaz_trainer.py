@@ -10,6 +10,7 @@ import amaz_sampling
 import amaz_util
 import amaz_sampling
 import amaz_datashaping
+import amaz_log
 
 sampling = amaz_sampling.Sampling()
 
@@ -26,6 +27,7 @@ class Trainer(object):
         self.xp = self.check_cupy(self.gpu)
         self.utility = amaz_util.Utility()
         self.datashaping = amaz_datashaping.DataShaping(self.xp)
+        self.logger = amaz_log.Log()
 
     def check_cupy(self,gpu):
         if gpu == -1:
@@ -36,14 +38,14 @@ class Trainer(object):
             return cuda.cupy
 
     def init_dataset(self):
-        train_x = self.dataset["train_x"]
-        train_y = self.dataset["train_y"]
-        test_x = self.dataset["test_x"]
-        test_y = self.dataset["test_y"]
+        train_x = self.dataset["train_x"][:500]
+        train_y = self.dataset["train_y"][:500]
+        test_x = self.dataset["test_x"][:500]
+        test_y = self.dataset["test_y"][:500]
         meta = self.dataset["meta"]
         return (train_x,train_y,test_x,test_y,meta)
 
-    def train_one(self):
+    def train_one(self,epoch):
         model = self.model
         optimizer = self.optimizer
         batch = self.batch
@@ -51,10 +53,11 @@ class Trainer(object):
         train_y = self.train_y
         meta = self.meta
         sum_loss = 0
-        data_length = len(train_x)
-        progress = self.utility.create_progressbar(int(data_length),desc='train',stride=1)
-        train_data_yeilder = sampling.random_sampling(int(data_length),int(batch),self.epoch)
-        for _,indices in zip(progress,train_data_yeilder):
+        total_data_length = len(train_x)
+
+        progress = self.utility.create_progressbar(int(total_data_length),desc='train',stride=batch)
+        train_data_yeilder = sampling.random_sampling(int(total_data_length),int(batch),self.epoch)
+        for i,indices in zip(progress,train_data_yeilder):
             model.cleargrads()
             x = train_x[indices]
             t = train_y[indices]
@@ -66,12 +69,16 @@ class Trainer(object):
             loss = model.calc_loss(y,t)
             loss.backward()
             loss.to_cpu()
-            sum_loss += loss.data * len(x)
-
+            sum_loss += loss.data * len(t)
             del loss,x,t
             optimizer.update()
 
-    def test_one(self):
+        ## LOGGING ME
+        print("train mean loss : ",sum_loss/len(train_y))
+        self.logger.train_loss(epoch,sum_loss/len(train_y))
+        print("-----")
+
+    def test_one(self,epoch):
         model = self.model
         optimizer = self.optimizer
         batch = self.batch
@@ -80,23 +87,39 @@ class Trainer(object):
         meta = self.meta
 
         sum_loss = 0
-        progress = self.utility.create_progressbar(int(len(train_x)),desc='train',stride=batch)
+        sum_accuracy = 0
+        progress = self.utility.create_progressbar(int(len(test_x)),desc='test',stride=batch)
         for i in progress:
             x = test_x[i:i+batch]
             t = test_y[i:i+batch]
 
-            x = datashaping.input(x,dtype=np.float32)
-            t = datashaping.input(t,dtype=np.int32)
+            x = self.datashaping.prepareinput(x,dtype=np.float32)
+            t = self.datashaping.prepareinput(t,dtype=np.int32)
 
             y = model(x,train=False)
             loss = model.calc_loss(y,t)
-            sum_loss += loss.data * len(x)
+            sum_loss += loss.data
+            sum_accuracy += F.accuracy(y,t).data * len(t)
+            categorical_accuracy = model.accuracy_of_each_category(y,t)
 
             del loss,x,t
+        ## LOGGING ME
+        print("test mean loss : ",sum_loss/len(test_y))
+        self.logger.test_loss(epoch,sum_loss/len(test_y))
+        print("test mean accuracy : ", sum_accuracy/len(test_y))
+        self.logger.accuracy(epoch,sum_accuracy/len(test_y))
+        print("------")
+
 
     def run(self):
         epoch = self.epoch
+        model = self.model
         progressor = self.utility.create_progressbar(epoch,desc='epoch',stride=1,start=0)
         for i in progressor:
-            self.train_one()
-            #self.test_one()
+            self.train_one(i)
+            self.test_one(i)
+            #DUMP Model pkl
+            model.to_cpu()
+            self.logger.save_model(model=model,epoch=i)
+
+        self.logger.finish_log()

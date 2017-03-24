@@ -70,14 +70,17 @@ class Squeeze(chainer.Chain):
         loss = F.softmax_cross_entropy(y,t)
         return loss
 
-    def accuracy(self,y,t):
-        #acquire the accuracy of each categories
-        ### FIX ME ###
+    def accuracy_of_each_category(self,y,t):
         y.to_cpu()
         t.to_cpu()
-        return F.accuracy(y,t)
-
-
+        categories = set(t.data)
+        accuracy = {}
+        for category in categories:
+            supervise_indices = np.where(t.data==category)[0]
+            predict_result_of_category = np.argmax(y.data[supervise_indices],axis=1)
+            countup = len(np.where(predict_result_of_category==category)[0])
+            accuracy[category] = countup
+        return accuracy
 
 if __name__ == "__main__":
     imgpath = "/Users/suguru/Desktop/test.jpg"
