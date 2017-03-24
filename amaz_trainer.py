@@ -36,8 +36,8 @@ class Trainer(object):
         if gpu == -1:
             return np
         else:
-            cuda.get_device(gpu).use()
-            #self.model.to_gpu()
+            #cuda.get_device(gpu).use()
+            self.model.to_gpu()
             return cuda.cupy
 
     def check_gpu(self, gpu):
