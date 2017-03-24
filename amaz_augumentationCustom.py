@@ -28,7 +28,7 @@ class Normalize32(object):
     @staticmethod
     def test(X):
         res = augumentation.convert_to_imgAry(X)
-        res = augumentation.scale(res,(32,32))
+        res = augumentation.resize(res,(32,32))
         res = augumentation.normalize(res,value=10.)
         res = augumentation.convert_to_chainerVariable(res)
         return res
@@ -48,7 +48,7 @@ class Normalize64(object):
     @staticmethod
     def test(X):
         res = augumentation.convert_to_imgAry(X)
-        res = augumentation.scale(res,(64,64))
+        res = augumentation.resize(res,(64,64))
         res = augumentation.normalize(res,value=10.)
         res = augumentation.convert_to_chainerVariable(res)
         return res
@@ -68,7 +68,7 @@ class Normalize128(object):
     @staticmethod
     def test(X):
         res = augumentation.convert_to_imgAry(X)
-        res = augumentation.scale(res,(128,128))
+        res = augumentation.resize(res,(128,128))
         res = augumentation.normalize(res,value=10.)
         res = augumentation.convert_to_chainerVariable(res)
         return res
