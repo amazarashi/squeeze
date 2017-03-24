@@ -13,14 +13,16 @@ class FireModule(chainer.Chain):
             conv1 = L.Convolution2D(input_size,s1,1,initialW=initializer),
             conv2 = L.Convolution2D(s1,e1,1,initialW=initializer),
             conv3 = L.Convolution2D(s1,e3,3,pad=(1,1),initialW=initializer),
+            bn = L.BatchNormalization(e1+e3)
         )
 
-    def __call__(self,x):
+    def __call__(self,x,train=False):
         h = F.relu(self.conv1(x))
         h1 = self.conv2(h)
         h2 = self.conv3(h)
-        h_expand = F.concat([h1,h2],axis=1)
-        return F.relu(h_expand)
+        h_expand = F.relu(F.concat([h1,h2],axis=1))
+        bn = self.bn(h_expand, test=not train)
+        return bn
 
 class Squeeze(chainer.Chain):
 
@@ -44,20 +46,20 @@ class Squeeze(chainer.Chain):
         h = F.relu(self.conv1(x))
         h = F.max_pooling_2d(h,3,stride=2,pad=1)
 
-        h = self.fire2(h)
-        h = self.fire3(h)
-        h = self.fire4(h)
+        h = self.fire2(h,train=train)
+        h = self.fire3(h,train=train)
+        h = self.fire4(h,train=train)
         h = F.max_pooling_2d(h,3,stride=2,pad=1)
 
-        h = self.fire5(h)
-        h = self.fire6(h)
-        h = self.fire7(h)
+        h = self.fire5(h,train=train)
+        h = self.fire6(h,train=train)
+        h = self.fire7(h,train=train)
         h = F.max_pooling_2d(h,3,stride=2,pad=1)
 
-        h = self.fire8(h)
+        h = self.fire8(h,train=train)
         h = F.max_pooling_2d(h,3,stride=2,pad=1)
 
-        h = self.fire9(h)
+        h = self.fire9(h,train=train)
         h = F.dropout(h,ratio=0.5)
 
         h = self.conv10(h)

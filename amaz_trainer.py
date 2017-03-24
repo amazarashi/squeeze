@@ -11,12 +11,13 @@ import amaz_util
 import amaz_sampling
 import amaz_datashaping
 import amaz_log
+import amaz_augumentationCustom
 
 sampling = amaz_sampling.Sampling()
 
 class Trainer(object):
 
-    def __init__(self,model=None,optimizer=None,dataset=None,epoch=300,batch=128,gpu=-1):
+    def __init__(self,model=None,optimizer=None,dataset=None,epoch=300,batch=128,gpu=-1,dataaugumentation=amaz_augumentationCustom.Normalize32):
         self.model = model
         self.optimizer = optimizer
         self.dataset = dataset
@@ -24,10 +25,12 @@ class Trainer(object):
         self.batch = batch
         self.train_x,self.train_y,self.test_x,self.test_y,self.meta = self.init_dataset()
         self.gpu = gpu
+        self.check_gpu_status = self.check_gpu(self.gpu)
         self.xp = self.check_cupy(self.gpu)
         self.utility = amaz_util.Utility()
         self.datashaping = amaz_datashaping.DataShaping(self.xp)
         self.logger = amaz_log.Log()
+        self.dataaugumentation = dataaugumentation
 
     def check_cupy(self,gpu):
         if gpu == -1:
@@ -37,11 +40,18 @@ class Trainer(object):
             self.model.to_gpu()
             return cuda.cupy
 
+    def check_gpu(self, gpu):
+        if gpu >= 0:
+            cuda.get_device(gpu).use()
+            self.to_gpu()
+            return True
+        return False
+
     def init_dataset(self):
-        train_x = self.dataset["train_x"][:500]
-        train_y = self.dataset["train_y"][:500]
-        test_x = self.dataset["test_x"][:500]
-        test_y = self.dataset["test_y"][:500]
+        train_x = self.dataset["train_x"]
+        train_y = self.dataset["train_y"]
+        test_x = self.dataset["test_x"]
+        test_y = self.dataset["test_y"]
         meta = self.dataset["meta"]
         return (train_x,train_y,test_x,test_y,meta)
 
@@ -62,21 +72,26 @@ class Trainer(object):
             x = train_x[indices]
             t = train_y[indices]
 
-            x = self.datashaping.prepareinput(x,dtype=np.float32)
+            DaX = []
+            for img in x:
+                da_x = self.dataaugumentation.train(img)
+                DaX.append(da_x)
+
+            x = self.datashaping.prepareinput(DaX,dtype=np.float32)
             t = self.datashaping.prepareinput(t,dtype=np.int32)
 
             y = model(x,train=True)
             loss = model.calc_loss(y,t)
             loss.backward()
             loss.to_cpu()
-            sum_loss += loss.data * len(t)
+            sum_loss += len(indices) * loss.data
             del loss,x,t
             optimizer.update()
 
         ## LOGGING ME
-        print("train mean loss : ",sum_loss/len(train_y))
+        print("train mean loss : ",float(sum_loss) / total_data_length)
         self.logger.train_loss(epoch,sum_loss/len(train_y))
-        print("-----")
+        print("######################")
 
     def test_one(self,epoch):
         model = self.model
@@ -93,23 +108,27 @@ class Trainer(object):
             x = test_x[i:i+batch]
             t = test_y[i:i+batch]
 
-            x = self.datashaping.prepareinput(x,dtype=np.float32)
+            DaX = []
+            for img in x:
+                da_x = self.dataaugumentation.test(img)
+                DaX.append(da_x)
+
+            x = self.datashaping.prepareinput(DaX,dtype=np.float32)
             t = self.datashaping.prepareinput(t,dtype=np.int32)
 
             y = model(x,train=False)
             loss = model.calc_loss(y,t)
-            sum_loss += loss.data
-            sum_accuracy += F.accuracy(y,t).data * len(t)
+            sum_loss += batch * loss.data
+            sum_accuracy += F.accuracy(y,t).data * batch
             categorical_accuracy = model.accuracy_of_each_category(y,t)
-
             del loss,x,t
+
         ## LOGGING ME
         print("test mean loss : ",sum_loss/len(test_y))
         self.logger.test_loss(epoch,sum_loss/len(test_y))
         print("test mean accuracy : ", sum_accuracy/len(test_y))
         self.logger.accuracy(epoch,sum_accuracy/len(test_y))
-        print("------")
-
+        print("######################")
 
     def run(self):
         epoch = self.epoch
@@ -121,5 +140,7 @@ class Trainer(object):
             #DUMP Model pkl
             model.to_cpu()
             self.logger.save_model(model=model,epoch=i)
+            if check_gpu_status:
+                model.to_gpu()
 
         self.logger.finish_log()

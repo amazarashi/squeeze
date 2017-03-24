@@ -20,3 +20,13 @@ class Sampling(object):
         yield indices result of random sampling but the sampled-item
         number is equal dependigng on category
         """
+        return
+
+    def pick_random_permutation(self,pick_number, sample_number, sort=False):
+        pick_number = int(pick_number)
+        sample_number = int(sample_number)
+        sort = bool(sort)
+        if sort:
+            return np.sort(np.random.permutation(sample_number)[:pick_number])
+        else:
+            return np.random.permutation(sample_number)[:pick_number]

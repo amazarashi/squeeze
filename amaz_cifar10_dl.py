@@ -5,6 +5,7 @@ import numpy as np
 current = dir_path = os.path.dirname(os.path.realpath('__file__')) + "/"
 
 import amaz_util as amaz_Util
+import amaz_augumentation
 
 class Cifar10(object):
 
@@ -18,6 +19,7 @@ class Cifar10(object):
         self.meta_files = ["batches.meta"]
         self.final_dataset_file = "cifar10.pkl"
         self.utility = amaz_Util.Utility()
+        self.augumentation = amaz_augumentation.Augumentation()
 
     def downloader(self):
         allfiles_in_current = [path.replace(current,"") for path in glob.glob(current+"*")]
@@ -49,7 +51,7 @@ class Cifar10(object):
          * 3 : load data
         """
         if self.final_dataset_file.replace(current,"") in allfiles_in_current:
-            print("already untared....")
+            print("already loaded....")
         else:
             print("load Train data")
             train_x = np.zeros((50000,3,32,32),dtype=np.float32)
@@ -76,9 +78,9 @@ class Cifar10(object):
             meta = meta_data["label_names"]
 
             data = {}
-            data["train_x"] = train_x
+            data["train_x"] = self.augumentation.Z_score(train_x)
             data["train_y"] = train_y
-            data["test_x"] = test_x
+            data["test_x"] = self.augumentation.Z_score(test_x)
             data["test_y"] = test_y
             data["meta"] = meta
 

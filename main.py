@@ -3,6 +3,7 @@ from chainer import optimizers
 import squeeze
 import amaz_trainer
 import amaz_cifar10_dl
+import amaz_augumentationCustom
 
 if __name__ == '__main__':
 
@@ -27,8 +28,10 @@ if __name__ == '__main__':
     optimizer = optimizers.Adam()
     optimizer.setup(model)
     dataset = amaz_cifar10_dl.Cifar10().loader()
+    dataaugumentation = amaz_augumentationCustom.Normalize128
     args['model'] = model
     args['optimizer'] = optimizer
     args['dataset'] = dataset
+    args['dataaugumentation'] = dataaugumentation
     main = amaz_trainer.Trainer(**args)
     main.run()
