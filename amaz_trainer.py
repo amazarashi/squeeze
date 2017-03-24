@@ -48,10 +48,10 @@ class Trainer(object):
         return False
 
     def init_dataset(self):
-        train_x = self.dataset["train_x"]
-        train_y = self.dataset["train_y"]
-        test_x = self.dataset["test_x"]
-        test_y = self.dataset["test_y"]
+        train_x = self.dataset["train_x"][:400]
+        train_y = self.dataset["train_y"][:400]
+        test_x = self.dataset["test_x"][:400]
+        test_y = self.dataset["test_y"][:400]
         meta = self.dataset["meta"]
         return (train_x,train_y,test_x,test_y,meta)
 

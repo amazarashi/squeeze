@@ -7,7 +7,7 @@ class Sampling(object):
     def __init__(self):
         pass
 
-    def random_sampling(self,data_length,batch_size,epoch):
+    def random_sampling(self,epoch,batch_size,data_length):
         """
         yield indices result of random sampling
         """
