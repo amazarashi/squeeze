@@ -65,8 +65,8 @@ class Trainer(object):
         sum_loss = 0
         total_data_length = len(train_x)
 
-        progress = self.utility.create_progressbar(int(total_data_length/len(batch)),desc='train',stride=1)
-        train_data_yeilder = sampling.random_sampling(int(total_data_length/len(batch)),int(batch),int(total_data_length))
+        progress = self.utility.create_progressbar(int(total_data_length/batch),desc='train',stride=1)
+        train_data_yeilder = sampling.random_sampling(int(total_data_length/batch),batch,total_data_length)
         #epoch,batch_size,data_length
         for i,indices in zip(progress,train_data_yeilder):
             model.cleargrads()
