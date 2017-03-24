@@ -140,7 +140,7 @@ class Trainer(object):
             #DUMP Model pkl
             model.to_cpu()
             self.logger.save_model(model=model,epoch=i)
-            if check_gpu_status:
+            if self.check_gpu_status:
                 model.to_gpu()
 
         self.logger.finish_log()
