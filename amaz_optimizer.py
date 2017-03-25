@@ -30,6 +30,6 @@ class OptimizerSqueeze(Optimizers):
             self.optimizer.lr = new_lr
             print("optimizer was changed to {0}..".format(new_lr))
         elif current_epoch >= int(self.epoch*2/3):
-            new_lr = 0.01
+            new_lr = 0.001
             self.optimizer.lr = new_lr
             print("optimizer was changed to {0}..".format(new_lr))
