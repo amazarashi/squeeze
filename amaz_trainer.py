@@ -48,10 +48,10 @@ class Trainer(object):
         return False
 
     def init_dataset(self):
-        train_x = self.dataset["train_x"]
-        train_y = self.dataset["train_y"]
-        test_x = self.dataset["test_x"]
-        test_y = self.dataset["test_y"]
+        train_x = self.dataset["train_x"][:100]
+        train_y = self.dataset["train_y"][:100]
+        test_x = self.dataset["test_x"][:100]
+        test_y = self.dataset["test_y"][:100]
         meta = self.dataset["meta"]
         return (train_x,train_y,test_x,test_y,meta)
 
@@ -137,6 +137,7 @@ class Trainer(object):
         progressor = self.utility.create_progressbar(epoch,desc='epoch',stride=1,start=0)
         for i in progressor:
             self.train_one(i)
+            self.optimizer.update_parameter(i)
             self.test_one(i)
             #DUMP Model pkl
             model.to_cpu()

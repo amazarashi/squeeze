@@ -4,6 +4,7 @@ import squeeze
 import amaz_trainer
 import amaz_cifar10_dl
 import amaz_augumentationCustom
+import amaz_optimizer
 
 if __name__ == '__main__':
 
@@ -25,7 +26,7 @@ if __name__ == '__main__':
     lr = args.pop('lr')
 
     model = squeeze.Squeeze(10)
-    optimizer = optimizers.Adam()
+    optimizer = amaz_optimizer.OptimizerSqueeze(model,epoch=300)
     optimizer.setup(model)
     dataset = amaz_cifar10_dl.Cifar10().loader()
     dataaugumentation = amaz_augumentationCustom.Normalize128

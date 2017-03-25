@@ -41,9 +41,9 @@ class Log(object):
         return
 
     def finish_log(self):
-        self.train_loss.close()
-        self.test_loss.close()
-        self.accuracy.close()
+        self.train_loss_fp.close()
+        self.test_loss_fp.close()
+        self.accuracy_fp.close()
         return
 
     def save_model(self,model,epoch):
