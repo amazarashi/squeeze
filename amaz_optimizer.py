@@ -27,7 +27,7 @@ class OptimizerSqueeze(Optimizers):
         optimizer.add_hook(weight_decay)
 
     def update_parameter(self,current_epoch):
-        if current_epoch in schedule int(self.epoch/2):
+        if current_epoch in schedule:
             new_lr = self.lr * 0.1
             self.optimizer.lr = new_lr
             print("optimizer was changed to {0}..".format(new_lr))
