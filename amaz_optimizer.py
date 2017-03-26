@@ -24,7 +24,7 @@ class OptimizerSqueeze(Optimizers):
         self.lr = lr
         self.optimizer = optimizers.MomentumSGD(self.lr,momentum)
         weight_decay = chainer.optimizer.WeightDecay(weight_decay)
-        optimizer.add_hook(weight_decay)
+        self.optimizer.add_hook(weight_decay)
 
     def update_parameter(self,current_epoch):
         if current_epoch in schedule:
