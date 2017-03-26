@@ -26,9 +26,10 @@ class OptimizerSqueeze(Optimizers):
         weight_decay = chainer.optimizer.WeightDecay(weight_decay)
         self.optimizer.setup(model)
         self.optimizer.add_hook(weight_decay)
+        self.schedule = schedule
 
     def update_parameter(self,current_epoch):
-        if current_epoch in schedule:
+        if current_epoch in self.schedule:
             new_lr = self.lr * 0.1
             self.optimizer.lr = new_lr
             print("optimizer was changed to {0}..".format(new_lr))
