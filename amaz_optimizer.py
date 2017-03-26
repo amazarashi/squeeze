@@ -19,17 +19,15 @@ class Optimizers(object):
 
 class OptimizerSqueeze(Optimizers):
 
-    def __init__(self,model=None,lr=0.01,momentum=0.9,epoch=300):
+    def __init__(self,model=None,lr=0.01,momentum=0.9,epoch=300,schedule=(150,225),weight_decay=1.0e-4):
         super(OptimizerSqueeze,self).__init__(model,epoch)
         self.lr = lr
         self.optimizer = optimizers.MomentumSGD(self.lr,momentum)
+        weight_decay = chainer.optimizer.WeightDecay(weight_decay)
+        optimizer.add_hook(weight_decay)
 
     def update_parameter(self,current_epoch):
-        if current_epoch >= int(self.epoch/3):
-            new_lr = 0.01
-            self.optimizer.lr = new_lr
-            print("optimizer was changed to {0}..".format(new_lr))
-        elif current_epoch >= int(self.epoch*2/3):
-            new_lr = 0.001
+        if current_epoch in schedule int(self.epoch/2):
+            new_lr = self.lr * 0.1
             self.optimizer.lr = new_lr
             print("optimizer was changed to {0}..".format(new_lr))

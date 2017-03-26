@@ -20,13 +20,15 @@ if __name__ == '__main__':
                         help='-1 means cpu, put gpu id here')
     parser.add_argument('--lr', '-lr', type=float,
                         default=0.1,
-                        help='leraning rate')
+                        help='learning rate')
 
     args = parser.parse_args().__dict__
     lr = args.pop('lr')
 
     model = squeeze.Squeeze(10)
-    optimizer = amaz_optimizer.OptimizerSqueeze(model,epoch=300)
+    lr = args['lr']
+    epoch = args['epoch']
+    optimizer = amaz_optimizer.OptimizerSqueeze(model,lr=lr,epoch=epoch)
     optimizer.setup(model)
     dataset = amaz_cifar10_dl.Cifar10().loader()
     dataaugumentation = amaz_augumentationCustom.Normalize128
