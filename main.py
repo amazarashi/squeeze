@@ -24,10 +24,9 @@ if __name__ == '__main__':
 
     args = parser.parse_args().__dict__
     lr = args.pop('lr')
+    epoch = args.pop('epoch')
 
     model = squeeze.Squeeze(10)
-    lr = args['lr']
-    epoch = args['epoch']
     optimizer = amaz_optimizer.OptimizerSqueeze(model,lr=lr,epoch=epoch)
     optimizer.setup(model)
     dataset = amaz_cifar10_dl.Cifar10().loader()
