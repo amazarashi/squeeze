@@ -1,9 +1,30 @@
-# ※ [STILL DEVELOPIING !!]
-
-# about
-
-squeeze net by chainer
+# About
+SqueezeNet by chainer
 
 # Paper
 
 [160224 SqueezeNet: AlexNet-level accuracy with 50x fewer parameters and <0.5MB model size](https://arxiv.org/abs/1602.07360)
+
+# Model
+
+Macroarchitectural of squeezeNet
+
+# How to run
+git clone git@github.com:amazarashi/squeeze-chainer.git
+cd ./squeeze-chainer
+python main.py -g 1
+
+# Inspection
+
+##### dataset
+ - Cifar10 [link](https://www.cs.toronto.edu/~kriz/cifar.html)
+
+##### Result
+
+(1) optimizer: Adam
+
+
+(2) optimizer: MomentumSGD
+  - weight decay : 1.0e-4
+  - momentum : 0.9
+  - schedule[default:0.01,150:0.1,225:0.001]
