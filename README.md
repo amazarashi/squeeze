@@ -27,4 +27,4 @@ python main.py -g 1
 (2) optimizer: MomentumSGD
   - weight decay : 1.0e-4
   - momentum : 0.9
-  - schedule[default:0.01,150:0.1,225:0.001]
+  - schedule[default:0.1,150:0.01,225:0.001]
