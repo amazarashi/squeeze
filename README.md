@@ -1,4 +1,5 @@
 # About
+
 SqueezeNet by chainer
 
 # Paper
@@ -10,20 +11,23 @@ SqueezeNet by chainer
 Macroarchitectural of squeezeNet
 
 # How to run
+
 git clone git@github.com:amazarashi/squeeze-chainer.git
+
 cd ./squeeze-chainer
+
 python main.py -g 1
 
 # Inspection
 
 ##### dataset
- - Cifar10 [link](https://www.cs.toronto.edu/~kriz/cifar.html)
+Cifar10 [(link)](https://www.cs.toronto.edu/~kriz/cifar.html)
 
 ##### Result
 
 (1) optimizer: Adam
-
-
+accuracy.png
+loss.png
 (2) optimizer: MomentumSGD
   - weight decay : 1.0e-4
   - momentum : 0.9
