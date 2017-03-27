@@ -26,9 +26,14 @@ Cifar10 [(link)](https://www.cs.toronto.edu/~kriz/cifar.html)
 ##### Result
 
 (1) optimizer: Adam
-accuracy.png
-loss.png
+
+![accuracy-adam]https://github.com/amazarashi/squeeze-chainer/blob/develop/log/adam/accuracy.png "accuracy")
+![loss-adam](https://github.com/amazarashi/squeeze-chainer/blob/develop/log/adam/loss.png "loss")
+
 (2) optimizer: MomentumSGD
   - weight decay : 1.0e-4
   - momentum : 0.9
   - schedule[default:0.01,150:0.1,225:0.001]
+
+![accuracy-adam]https://github.com/amazarashi/squeeze-chainer/blob/develop/log/momsgd/accuracy.png "accuracy")
+![loss-adam](https://github.com/amazarashi/squeeze-chainer/blob/develop/log/momsgd/loss.png "loss")
