@@ -20,10 +20,10 @@ python main.py -g 1
 
 # Inspection
 
-##### dataset
+### dataset
 Cifar10 [(link)](https://www.cs.toronto.edu/~kriz/cifar.html)
 
-##### Result
+### Result
 
 (1) optimizer: Adam
 
