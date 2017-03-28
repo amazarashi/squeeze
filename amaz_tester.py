@@ -43,6 +43,5 @@ class Tester(object):
         res["predict_label"] = predict_label
         return res
 
-
 # if __name__ == "__main__":
 #
