@@ -91,6 +91,16 @@ class Cifar10(object):
         print("data preparation was done ...")
 
     def loader(self):
+        """
+        with download check
+        """
         self.downloader()
+        data = self.utility.unpickle(current + self.final_dataset_file)
+        return data
+
+    def simpleLoader(self):
+        """
+        without download check
+        """
         data = self.utility.unpickle(current + self.final_dataset_file)
         return data
