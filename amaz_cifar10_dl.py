@@ -45,7 +45,6 @@ class Cifar10(object):
             self.utility.untar_file(self.savepath)
             print("ended to untar")
 
-
         #load data for Train
         """
          * 3 : load data

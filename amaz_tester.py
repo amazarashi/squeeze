@@ -34,7 +34,7 @@ class Tester(object):
         xin = self.datashaping.prepareinput([da_x],dtype=np.float32)
         y = self.model(xin,train=False)
         res = {}
-        score_of_each = y.data
+        score_of_each = list(y.data)
         predict_index = np.argmax(score_of_each, axis=1)
         print(self.meta)
         predict_label = self.meta[predict_index]
