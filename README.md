@@ -40,4 +40,4 @@ Cifar10 [(link)](https://www.cs.toronto.edu/~kriz/cifar.html)
 ![accuracy-adam](https://github.com/amazarashi/squeeze-chainer/blob/develop/log/momsgd/accuracy.png "accuracy")
 
 ![loss-adam](https://github.com/amazarashi/squeeze-chainer/blob/develop/log/momsgd/loss.png "loss")
->>>>>>> e7d5025c74d904939da2e892acde751d3a288b99
+
